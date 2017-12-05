@@ -72,8 +72,8 @@ public class Booleans {
         public Boolean convert(Number value) throws InvalidConversionException {
             if(value == null) return null;
 
-            if(value == 1) return true;
-            else if(value == 0) return false;
+            if(value.equals(1)) return true;
+            else if(value.equals(0)) return false;
             else throw new InvalidConversionException();
         }
     }

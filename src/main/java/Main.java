@@ -5,10 +5,10 @@
  */
 public class Main {
     public static void main(String[] args) {
-        String v = null;
+        String v = "0.43";
 
-        String bl = (String) TypeConverter.convert(v, "", "");
+        int i = TypeConverter.toInteger(v);
 
-        System.out.println(bl);
+        System.out.println(i);
     }
 }
