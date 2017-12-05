@@ -9,6 +9,7 @@ import exceptions.UnsupportedTypeException;
  */
 public class Booleans {
 
+
     public static Boolean valueOf(@Nullable Object o, @Nullable Boolean defValue) {
         Boolean result = defValue;
         try {
@@ -26,38 +27,26 @@ public class Booleans {
 
         String type = o.getClass().getCanonicalName();
 
-        if(type.equals(Type.TYPE_STRING)) return valueOf((String)o);
-        else if(type.equals(Type.TYPE_INTEGER)) return valueOf((int)o);
-        else if(type.equals(Type.TYPE_LONG)) return valueOf((long)o);
-        else if(type.equals(Type.TYPE_FLOAT)) return valueOf((float)o);
-        else if(type.equals(Type.TYPE_DOUBLE)) return valueOf((double)o);
+        if(type.equals(Type.TYPE_BOOLEAN)) return (Boolean)o;
+        else if(type.equals(Type.TYPE_STRING)) return valueOf((String)o);
+        else if(type.equals(Type.TYPE_INTEGER)) return valueOf((Integer)o);
+        else if(type.equals(Type.TYPE_LONG)) return valueOf((Long)o);
+        else if(type.equals(Type.TYPE_FLOAT)) return valueOf((Float)o);
+        else if(type.equals(Type.TYPE_DOUBLE)) return valueOf((Double)o);
         else throw new UnsupportedTypeException(type);
     }
 
-    private static boolean valueOf(String s) {
+    private static Boolean valueOf(String s) {
         StringConverter stringConverter = (new Booleans()).new StringConverter();
         return stringConverter.convert(s);
     }
 
-    private static boolean valueOf(int i) {
-        IntegerConverter integerConverter = (new Booleans()).new IntegerConverter();
-        return integerConverter.convert(i);
+    private static Boolean valueOf(Number n) {
+        NumberConverter numberConverter = (new Booleans()).new NumberConverter();
+        return numberConverter.convert(n);
     }
 
-    private static boolean valueOf(long l) {
-        LongConverter longConverter = (new Booleans()).new LongConverter();
-        return longConverter.convert(l);
-    }
-
-    private static boolean valueOf(float f) {
-        FloatConverter floatConverter = (new Booleans()).new FloatConverter();
-        return floatConverter.convert(f);
-    }
-
-    private static boolean valueOf(double d) {
-        DoubleConverter doubleConverter = (new Booleans()).new DoubleConverter();
-        return doubleConverter.convert(d);
-    }
+    /* Converters */
 
     public class StringConverter implements Converter<String, Boolean> {
         @Override
@@ -78,42 +67,9 @@ public class Booleans {
         }
     }
 
-    public class IntegerConverter implements Converter<Integer, Boolean> {
+    public class NumberConverter implements Converter<Number, Boolean> {
         @Override
-        public Boolean convert(Integer value) throws InvalidConversionException {
-            if(value == null) return null;
-
-            if(value == 1) return true;
-            else if(value == 0) return false;
-            else throw new InvalidConversionException();
-        }
-    }
-
-    public class LongConverter implements Converter<Long, Boolean> {
-        @Override
-        public Boolean convert(Long value) throws InvalidConversionException {
-            if(value == null) return null;
-
-            if(value == 1) return true;
-            else if(value == 0) return false;
-            else throw new InvalidConversionException();
-        }
-    }
-
-    public class FloatConverter implements Converter<Float, Boolean> {
-        @Override
-        public Boolean convert(Float value) throws InvalidConversionException {
-            if(value == null) return null;
-
-            if(value == 1) return true;
-            else if(value == 0) return false;
-            else throw new InvalidConversionException();
-        }
-    }
-
-    public class DoubleConverter implements Converter<Double, Boolean> {
-        @Override
-        public Boolean convert(Double value) throws InvalidConversionException {
+        public Boolean convert(Number value) throws InvalidConversionException {
             if(value == null) return null;
 
             if(value == 1) return true;

@@ -46,11 +46,13 @@ public class TypeConverter {
         if(targetType == null) throw new IllegalArgumentException("Parameter targetType can't be null.");
         if(value == null) return null;
 
-        if(targetType.equals(Type.TYPE_BOOLEAN)) {
-            return Booleans.valueOf(value);
-        } else {
-            throw new UnsupportedTypeException(targetType);
-        }
+        if(targetType.equals(Type.TYPE_BOOLEAN)) return Booleans.valueOf(value);
+        else if(targetType.equals(Type.TYPE_STRING)) return Strings.valueOf(value);
+        else if(targetType.equals(Type.TYPE_INTEGER)) return Integers.valueOf(value);
+        else if(targetType.equals(Type.TYPE_LONG)) return Longs.valueOf(value);
+        else if(targetType.equals(Type.TYPE_FLOAT)) return Floats.valueOf(value);
+        else if(targetType.equals(Type.TYPE_DOUBLE)) return Doubles.valueOf(value);
+        else throw new UnsupportedTypeException(targetType);
     }
 
     public static Boolean toBoolean(Object value, Boolean defValue) {
@@ -59,6 +61,46 @@ public class TypeConverter {
 
     public static Boolean toBoolean(Object value) {
         return Booleans.valueOf(value);
+    }
+
+    public static String toString(Object value, String defValue) {
+        return Strings.valueOf(value, defValue);
+    }
+
+    public static String toString(Object value) {
+        return Strings.valueOf(value);
+    }
+
+    public static Integer toInteger(Object value, Integer defValue) {
+        return Integers.valueOf(value, defValue);
+    }
+
+    public static Integer toInteger(Object value) {
+        return Integers.valueOf(value);
+    }
+
+    public static Long toLong(Object value, Long defValue) {
+        return Longs.valueOf(value, defValue);
+    }
+
+    public static Long toLong(Object value) {
+        return Longs.valueOf(value);
+    }
+
+    public static Float toFloat(Object value, Float defValue) {
+        return Floats.valueOf(value, defValue);
+    }
+
+    public static Float toFloat(Object value) {
+        return Floats.valueOf(value);
+    }
+
+    public static Double toDouble(Object value, Double defValue) {
+        return Doubles.valueOf(value, defValue);
+    }
+
+    public static Double toDouble(Object value) {
+        return Doubles.valueOf(value);
     }
 
     public static Object convert(Object value, Converter converter) {

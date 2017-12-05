@@ -5,10 +5,10 @@ import exceptions.UnsupportedTypeException;
 /**
  * Created by Alex on 05/12/2017.
  */
-public class Floats {
+public class Longs {
 
-    public static Float valueOf(@Nullable Object o, @Nullable Float defValue) {
-        Float result = defValue;
+    public static Long valueOf(@Nullable Object o, @Nullable Long defValue) {
+        Long result = defValue;
         try {
             result = valueOf(o);
             if(result == null) result = defValue;
@@ -19,69 +19,69 @@ public class Floats {
         }
     }
 
-    public static Float valueOf(@Nullable Object o) {
+    public static Long valueOf(@Nullable Object o) {
         if(o == null) return null;
 
         String type = o.getClass().getCanonicalName();
 
-        if(type.equals(Type.TYPE_FLOAT)) return (Float)o;
+        if(type.equals(Type.TYPE_LONG)) return (Long)o;
         else if(type.equals(Type.TYPE_STRING)) return valueOf((String)o);
         else if(type.equals(Type.TYPE_BOOLEAN)) return valueOf((Boolean)o);
         else if(type.equals(Type.TYPE_INTEGER)) return valueOf((Integer)o);
-        else if(type.equals(Type.TYPE_LONG)) return valueOf((Long)o);
+        else if(type.equals(Type.TYPE_FLOAT)) return valueOf((Float)o);
         else if(type.equals(Type.TYPE_DOUBLE)) return valueOf((Double)o);
         else throw new UnsupportedTypeException(type);
     }
 
 
-    private static Float valueOf(String s) {
-        StringConverter stringConverter = (new Floats()).new StringConverter();
+    private static Long valueOf(String s) {
+        StringConverter stringConverter = (new Longs()).new StringConverter();
         return stringConverter.convert(s);
     }
 
-    private static Float valueOf(Boolean i) {
-        BooleanConverter booleanConverter = (new Floats()).new BooleanConverter();
+    private static Long valueOf(Boolean i) {
+        BooleanConverter booleanConverter = (new Longs()).new BooleanConverter();
         return booleanConverter.convert(i);
     }
 
-    private static Float valueOf(Number n) {
-        NumberConverter numberConverter = (new Floats()).new NumberConverter();
+    private static Long valueOf(Number n) {
+        NumberConverter numberConverter = (new Longs()).new NumberConverter();
         return numberConverter.convert(n);
     }
 
 
     /* Converters */
 
-    public class StringConverter implements Converter<String, Float> {
+    public class StringConverter implements Converter<String, Long> {
         @Override
-        public Float convert(@Nullable String value) throws InvalidConversionException {
+        public Long convert(@Nullable String value) throws InvalidConversionException {
             if(value == null) return null;
 
             try {
                 Double d = Double.valueOf(value);
-                return d.floatValue();
+                return d.longValue();
             } catch (NumberFormatException e) {
                 throw new InvalidConversionException();
             }
         }
     }
 
-    public class BooleanConverter implements Converter<Boolean, Float> {
+    public class BooleanConverter implements Converter<Boolean, Long> {
         @Override
-        public Float convert(Boolean value) throws InvalidConversionException {
+        public Long convert(Boolean value) throws InvalidConversionException {
             if(value == null) return null;
 
-            if(value) return 1F;
-            else return 0F;
+            if(value) return 1L;
+            else return 0L;
         }
     }
 
-    public class NumberConverter implements Converter<Number, Float> {
+    public class NumberConverter implements Converter<Number, Long> {
         @Override
-        public Float convert(Number value) throws InvalidConversionException {
+        public Long convert(Number value) throws InvalidConversionException {
             if(value == null) return null;
 
-            return value.floatValue();
+            return value.longValue();
         }
     }
 }

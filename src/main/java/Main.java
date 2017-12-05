@@ -5,9 +5,9 @@
  */
 public class Main {
     public static void main(String[] args) {
-        String v = "0";
+        String v = null;
 
-        Boolean bl = (Boolean) TypeConverter.convert(v, true, "");
+        String bl = (String) TypeConverter.convert(v, "", "");
 
         System.out.println(bl);
     }
