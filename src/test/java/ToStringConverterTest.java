@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 public class ToStringConverterTest {
 
 
-    public static class FromObjectConverterTest {
+    public static class FromObjectTest {
         ToStringConverterFactory.FromObjectConverter fromObjectConverter;
 
         @Before
@@ -22,7 +22,7 @@ public class ToStringConverterTest {
 
         @Test
         public void convert_ValueNull_ReturnsNull() throws Exception {
-            Assert.assertEquals(null, fromObjectConverter.convert(null));
+            Assert.assertNull(fromObjectConverter.convert(null));
         }
 
         @Test

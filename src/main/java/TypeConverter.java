@@ -100,6 +100,14 @@ public class TypeConverter {
             return (Double) to(Type.DOUBLE);
         }
 
+        public Float toShort() {
+            return (Float) to(Type.SHORT);
+        }
+
+        public Double toByte() {
+            return (Double) to(Type.BYTE);
+        }
+
         private ConverterFactory getConverterFactory(String resultType) {
             if(resultType.equals(Type.STRING)) return new ToStringConverterFactory();
             else if(resultType.equals(Type.BOOLEAN)) return new ToBooleanConverterFactory();
@@ -107,6 +115,8 @@ public class TypeConverter {
             else if(resultType.equals(Type.LONG)) return new ToLongConverterFactory();
             else if(resultType.equals(Type.FLOAT)) return new ToFloatConverterFactory();
             else if(resultType.equals(Type.DOUBLE)) return new ToDoubleConverterFactory();
+            else if(resultType.equals(Type.SHORT)) return new ToShortConverterFactory();
+            else if(resultType.equals(Type.BYTE)) return new ToByteConverterFactory();
 
             throw new UnsupportedTypeException(resultType);
         }

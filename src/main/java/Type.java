@@ -9,8 +9,12 @@ public class Type {
     public static final String LONG = "java.lang.Long";
     public static final String FLOAT = "java.lang.Float";
     public static final String DOUBLE = "java.lang.Double";
+    public static final String SHORT = "java.lang.Short";
+    public static final String BYTE = "java.lang.Byte";
 
-    public static final String[] SUPPORTED_TYPES = new String[] {STRING, BOOLEAN, INTEGER, LONG, FLOAT, DOUBLE};
+    public static final String[] SUPPORTED_TYPES = new String[]{
+            STRING, BOOLEAN, INTEGER, LONG, FLOAT, DOUBLE, SHORT, BYTE
+    };
 
     public static boolean isSupported(String type) {
         if(type == null) return false;
@@ -20,5 +24,16 @@ public class Type {
         }
 
         return false;
+    }
+
+    public static boolean isNumber(String type) {
+        if(type == null) return false;
+
+        if(type.equals(BYTE) || type.equals(SHORT) || type.equals(INTEGER) || type.equals(LONG) ||
+                type.equals(FLOAT) || type.equals(DOUBLE)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

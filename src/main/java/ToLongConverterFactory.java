@@ -9,8 +9,7 @@ public class ToLongConverterFactory implements ConverterFactory {
 
     @Override
     public Converter getConverter(String type) {
-        if(type.equals(Type.INTEGER) || type.equals(Type.LONG) || type.equals(Type.FLOAT) ||
-                type.equals(Type.DOUBLE)) {
+        if(Type.isNumber(type)) {
             return new FromNumberConverter();
         } else if(type.equals(Type.BOOLEAN)) {
             return new FromBooleanConverter();
@@ -19,7 +18,6 @@ public class ToLongConverterFactory implements ConverterFactory {
         }
         throw new UnsupportedTypeException(type);
     }
-
 
     /* Converters */
 

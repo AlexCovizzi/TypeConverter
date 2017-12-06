@@ -1,11 +1,10 @@
-
 import exceptions.InvalidConversionException;
 import exceptions.UnsupportedTypeException;
 
 /**
- * Created by Alex on 05/12/2017.
+ * Created by Alex on 06/12/2017.
  */
-public class ToFloatConverterFactory implements ConverterFactory {
+public class ToShortConverterFactory implements ConverterFactory {
 
     @Override
     public Converter getConverter(String type) {
@@ -21,36 +20,36 @@ public class ToFloatConverterFactory implements ConverterFactory {
 
     /* Converters */
 
-    public class FromStringConverter implements Converter<String, Float> {
+    public class FromStringConverter implements Converter<String, Short> {
         @Override
-        public Float convert(String value) throws InvalidConversionException {
+        public Short convert(String value) throws InvalidConversionException {
             if(value == null) return null;
 
             try {
                 Double d = Double.valueOf(value);
-                return d.floatValue();
+                return d.shortValue();
             } catch (NumberFormatException e) {
                 throw new InvalidConversionException();
             }
         }
     }
 
-    public class FromBooleanConverter implements Converter<Boolean, Float> {
+    public class FromBooleanConverter implements Converter<Boolean, Short> {
         @Override
-        public Float convert(Boolean value) throws InvalidConversionException {
+        public Short convert(Boolean value) throws InvalidConversionException {
             if(value == null) return null;
 
-            if(value) return 1F;
-            else return 0F;
+            if(value) return 1;
+            else return 0;
         }
     }
 
-    public class FromNumberConverter implements Converter<Number, Float> {
+    public class FromNumberConverter implements Converter<Number, Short> {
         @Override
-        public Float convert(Number value) throws InvalidConversionException {
+        public Short convert(Number value) throws InvalidConversionException {
             if(value == null) return null;
 
-            return value.floatValue();
+            return value.shortValue();
         }
     }
 }
