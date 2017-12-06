@@ -5,10 +5,8 @@
  */
 public class Main {
     public static void main(String[] args) {
-        String v = "0.43";
+        String v = "3.54346drtfhrth";
 
-        int i = TypeConverter.toInteger(v);
-
-        System.out.println(i);
+        System.out.println(TypeConverter.convert(v).def(2).toLong());
     }
 }
