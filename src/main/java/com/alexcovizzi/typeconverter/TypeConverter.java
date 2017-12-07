@@ -1,71 +1,64 @@
+package com.alexcovizzi.typeconverter;
 
-import exceptions.InvalidConversionException;
-import exceptions.UnsupportedTypeException;
+import com.alexcovizzi.typeconverter.converters.*;
+import com.alexcovizzi.typeconverter.exceptions.InvalidConversionException;
+import com.alexcovizzi.typeconverter.exceptions.UnsupportedTypeException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by Alex on 05/12/2017.
  */
 public class TypeConverter {
 
-    public static Builder convert(Object value) {
+    public static Builder convert(@Nullable Object value) {
         return (new TypeConverter()).new Builder(value);
     }
 
     public class Builder {
         private Object value;
         private Object defValue;
-        private boolean hasDef = false;
         private String resultType;
         private Converter converter;
 
-        public Builder(Object value) {
+        public Builder(@Nullable Object value) {
             this.value = value;
         }
 
-        public Builder def(Object defaultValue) {
+        public Builder def(@NotNull Object defaultValue) {
+            if(defaultValue == null) throw new IllegalArgumentException("Default value can't be null.");
             this.defValue = defaultValue;
-            this.hasDef = true;
+
             return this;
         }
 
-        public Object to(String type) {
+        public Object to(@NotNull String type) {
+            if(type == null) throw new IllegalArgumentException("String type can't be null.");
             this.resultType = type;
-
-            // Default value is automatically converted to the resultType if the resultType is supported
-            if(hasDef && defValue != null && Type.isSupported(resultType)) {
-                String defValueType = defValue.getClass().getCanonicalName();
-                if(!defValueType.equals(resultType)) {
-                    try {
-                        defValue = TypeConverter.convert(defValue).to(resultType);
-                    } catch (InvalidConversionException e) {
-                        throw new IllegalArgumentException("Invalid default value.");
-                    }
-                }
-            }
 
             // Find converter based on value type and result type
             String valueType = value.getClass().getCanonicalName();
             ConverterFactory converterFactory = getConverterFactory(resultType);
             Converter converter = converterFactory.getConverter(valueType);
+
             return with(converter);
         }
 
-        public Object with(Converter converter) {
+        public Object with(@NotNull Converter converter) {
             this.converter = converter;
 
-            if(hasDef) {
-                Object result = defValue;
+            Object result;
+            if(defValue != null) {
                 try {
                     result = convert();
                     if(result == null) result = defValue;
                 } catch (Exception e) {
-                    //
-                } finally {
-                    return result;
+                    result = defValue;
                 }
             } else {
-                return convert();
+                result = convert();
             }
+            return result;
         }
 
         private Object convert() {
@@ -82,6 +75,10 @@ public class TypeConverter {
 
         public String toString() {
             return (String) to(Type.STRING);
+        }
+
+        public Number toNumber() {
+            return (Number) to(Type.NUMBER);
         }
 
         public Integer toInteger() {
@@ -110,6 +107,7 @@ public class TypeConverter {
 
         private ConverterFactory getConverterFactory(String resultType) {
             if(resultType.equals(Type.STRING)) return new ToStringConverterFactory();
+            else if(resultType.equals(Type.NUMBER)) return new ToNumberConverterFactory();
             else if(resultType.equals(Type.BOOLEAN)) return new ToBooleanConverterFactory();
             else if(resultType.equals(Type.INTEGER)) return new ToIntegerConverterFactory();
             else if(resultType.equals(Type.LONG)) return new ToLongConverterFactory();

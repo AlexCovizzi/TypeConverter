@@ -1,4 +1,6 @@
-import exceptions.InvalidConversionException;
+package com.alexcovizzi.typeconverter;
+
+import com.alexcovizzi.typeconverter.exceptions.InvalidConversionException;
 
 /**
  * Created by Alex on 05/12/2017.

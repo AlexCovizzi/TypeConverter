@@ -1,4 +1,4 @@
-package exceptions;
+package com.alexcovizzi.typeconverter.exceptions;
 
 /**
  * Created by Alex on 05/12/2017.

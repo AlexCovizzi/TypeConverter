@@ -1,22 +1,24 @@
-import exceptions.InvalidConversionException;
+import com.alexcovizzi.typeconverter.converters.ToNumberConverterFactory;
+import com.alexcovizzi.typeconverter.exceptions.InvalidConversionException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import com.alexcovizzi.typeconverter.converters.ToFloatConverterFactory;
 
 /**
  * Created by Alex on 06/12/2017.
  */
 @RunWith(Enclosed.class)
-public class ToFloatConverterTest {
+public class ToNumberConverterTest {
 
     public static class FromStringTest {
-        ToFloatConverterFactory.FromStringConverter stringConverter;
+        ToNumberConverterFactory.FromStringConverter stringConverter;
 
         @Before
         public void setUp() throws Exception {
-            stringConverter = (new ToFloatConverterFactory()).new FromStringConverter();
+            stringConverter = (new ToNumberConverterFactory()).new FromStringConverter();
         }
 
         @Test
@@ -27,7 +29,7 @@ public class ToFloatConverterTest {
         @Test
         public void convert_ValueStringNumber_ReturnsNumber() throws Exception {
             String value = "2.5";
-            Float result = 2.5F;
+            Number result = 2.5;
             Assert.assertEquals(result, stringConverter.convert(value));
         }
 
@@ -44,30 +46,51 @@ public class ToFloatConverterTest {
     }
 
     public static class FromBooleanTest {
-        ToFloatConverterFactory.FromBooleanConverter stringConverter;
+        ToNumberConverterFactory.FromBooleanConverter booleanConverter;
 
         @Before
         public void setUp() throws Exception {
-            stringConverter = (new ToFloatConverterFactory()).new FromBooleanConverter();
+            booleanConverter = (new ToNumberConverterFactory()).new FromBooleanConverter();
         }
 
         @Test
         public void convert_ValueNull_ReturnsNull() throws Exception {
-            Assert.assertNull(stringConverter.convert(null));
+            Assert.assertNull(booleanConverter.convert(null));
         }
 
         @Test
         public void convert_ValueBooleanTrue_ReturnsOne() throws Exception {
             Boolean value = true;
-            Float result = 1F;
-            Assert.assertEquals(result, stringConverter.convert(value));
+            Number result = 1;
+            Assert.assertEquals(result, booleanConverter.convert(value));
         }
 
         @Test
         public void convert_ValueBooleanFalse_ReturnsZero() throws Exception {
             Boolean value = false;
-            Float result = 0F;
-            Assert.assertEquals(result, stringConverter.convert(value));
+            Number result = 0;
+            Assert.assertEquals(result, booleanConverter.convert(value));
+        }
+    }
+
+    public static class FromNumberTest {
+        ToNumberConverterFactory.FromNumberConverter numberConverter;
+
+        @Before
+        public void setUp() throws Exception {
+            numberConverter = (new ToNumberConverterFactory()).new FromNumberConverter();
+        }
+
+        @Test
+        public void convert_ValueNull_ReturnsNull() throws Exception {
+            Assert.assertNull(numberConverter.convert(null));
+        }
+
+        @Test
+        public void convert_ValueNumber_ReturnsNumber() throws Exception {
+            Number value = 3.14;
+            Number result = 3.14;
+            Assert.assertEquals(result, numberConverter.convert(value));
         }
     }
 }

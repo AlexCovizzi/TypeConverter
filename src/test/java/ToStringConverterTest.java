@@ -4,13 +4,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import com.alexcovizzi.typeconverter.converters.ToStringConverterFactory;
 
 /**
  * Created by Alex on 06/12/2017.
  */
 @RunWith(Enclosed.class)
 public class ToStringConverterTest {
-
 
     public static class FromObjectTest {
         ToStringConverterFactory.FromObjectConverter fromObjectConverter;
