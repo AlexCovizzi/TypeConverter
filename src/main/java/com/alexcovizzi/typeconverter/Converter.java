@@ -1,11 +1,9 @@
 package com.alexcovizzi.typeconverter;
 
 import com.alexcovizzi.typeconverter.exceptions.InvalidConversionException;
+import org.jetbrains.annotations.Nullable;
 
-/**
- * Created by Alex on 05/12/2017.
- */
-public interface Converter<V, R> {
-
-    R convert(V value) throws InvalidConversionException;
+public interface Converter<T> {
+    @Nullable
+    T convert(Object value) throws InvalidConversionException;
 }

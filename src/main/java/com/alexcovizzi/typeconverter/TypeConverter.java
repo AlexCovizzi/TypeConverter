@@ -1,122 +1,148 @@
 package com.alexcovizzi.typeconverter;
 
 import com.alexcovizzi.typeconverter.converters.*;
+import com.alexcovizzi.typeconverter.exceptions.ConverterNotFoundException;
 import com.alexcovizzi.typeconverter.exceptions.InvalidConversionException;
-import com.alexcovizzi.typeconverter.exceptions.UnsupportedTypeException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
- * Created by Alex on 05/12/2017.
+ *
  */
 public class TypeConverter {
+    private static final Map<String, Converter<?>> converterMap = new ConcurrentHashMap();
 
     public static Builder convert(@Nullable Object value) {
         return (new TypeConverter()).new Builder(value);
     }
 
+    public static <T> void addConverter(Class<T> cls, Converter<T> converter) {
+        String key = cls.getCanonicalName();
+        addConverter(key, converter);
+    }
+
+    public static void addConverter(String type, Converter<?> converter) {
+        converterMap.put(type, converter);
+    }
+
+    @Nullable
+    public static <T>Converter<T> getConverter(Class<T> cls) {
+        String key = cls.getCanonicalName();
+        return (Converter<T>) getConverter(key);
+    }
+
+    @Nullable
+    public static Converter<?> getConverter(String type) {
+        return converterMap.get(type);
+    }
+
+    public static void removeConverter(Class<?> cls) {
+        String key = cls.getCanonicalName();
+        removeConverter(key);
+    }
+
+    public static void removeConverter(String type) {
+        converterMap.remove(type);
+    }
+
     public class Builder {
         private Object value;
         private Object defValue;
-        private String resultType;
-        private Converter converter;
+        private boolean hasDef = false;
 
         public Builder(@Nullable Object value) {
             this.value = value;
         }
 
         public Builder def(@NotNull Object defaultValue) {
-            if(defaultValue == null) throw new IllegalArgumentException("Default value can't be null.");
+            if(defaultValue == null) throw new IllegalArgumentException("Argument defaultValue can't be null.");
             this.defValue = defaultValue;
+            this.hasDef = true;
 
             return this;
         }
 
+        public <T>T to(@NotNull Class<T> cls) {
+            if(cls == null) throw new IllegalArgumentException("Argument cls can't be null.");
+            String resultType = cls.getCanonicalName();
+
+            return (T) to(resultType);
+        }
+
         public Object to(@NotNull String type) {
-            if(type == null) throw new IllegalArgumentException("String type can't be null.");
-            this.resultType = type;
-
-            // Find converter based on value type and result type
-            String valueType = value.getClass().getCanonicalName();
-            ConverterFactory converterFactory = getConverterFactory(resultType);
-            Converter converter = converterFactory.getConverter(valueType);
-
-            return with(converter);
+            if(type == null) throw new IllegalArgumentException("Argument type can't be null.");
+            type = Utils.primitiveToWrapperType(type);
+            Converter converter = getConverter(type);
+            if(converter == null) throw new ConverterNotFoundException(type);
+            return with(getConverter(type));
         }
 
-        public Object with(@NotNull Converter converter) {
-            this.converter = converter;
+        public Object with(@NotNull Converter...converters) {
+            if(converters == null) throw new IllegalArgumentException("Argument converters can't be null.");
+            if(converters.length == 0) throw new IllegalArgumentException("Argument converters can't be empty.");
+            Converter converter = new ChainConverter(converters);
 
-            Object result;
-            if(defValue != null) {
-                try {
-                    result = convert();
-                    if(result == null) result = defValue;
-                } catch (Exception e) {
-                    result = defValue;
-                }
-            } else {
-                result = convert();
-            }
-            return result;
-        }
-
-        private Object convert() {
             try {
-                return converter.convert(value);
-            } catch (ClassCastException e) {
-                throw new IllegalArgumentException("Invalid parameter type ("+value.getClass().getCanonicalName()+")");
+                Object result = converter.convert(value);
+                if(result == null && hasDef) result = defValue;
+                return result;
+            } catch (InvalidConversionException e) {
+                if(hasDef) return defValue;
+                else throw e;
             }
         }
 
         public Boolean toBoolean() {
-            return (Boolean) to(Type.BOOLEAN);
+            return to(Boolean.class);
         }
 
         public String toString() {
-            return (String) to(Type.STRING);
+            return to(String.class);
         }
 
         public Number toNumber() {
-            return (Number) to(Type.NUMBER);
+            return to(Number.class);
+        }
+
+        public Short toShort() {
+            return to(Short.class);
         }
 
         public Integer toInteger() {
-            return (Integer) to(Type.INTEGER);
+            return to(Integer.class);
         }
 
         public Long toLong() {
-            return (Long) to(Type.LONG);
+            return to(Long.class);
         }
 
         public Float toFloat() {
-            return (Float) to(Type.FLOAT);
+            return to(Float.class);
         }
 
         public Double toDouble() {
-            return (Double) to(Type.DOUBLE);
+            return to(Double.class);
         }
 
-        public Float toShort() {
-            return (Float) to(Type.SHORT);
+        public Character toChar() {
+            return to(Character.class);
         }
 
-        public Double toByte() {
-            return (Double) to(Type.BYTE);
-        }
+    }
 
-        private ConverterFactory getConverterFactory(String resultType) {
-            if(resultType.equals(Type.STRING)) return new ToStringConverterFactory();
-            else if(resultType.equals(Type.NUMBER)) return new ToNumberConverterFactory();
-            else if(resultType.equals(Type.BOOLEAN)) return new ToBooleanConverterFactory();
-            else if(resultType.equals(Type.INTEGER)) return new ToIntegerConverterFactory();
-            else if(resultType.equals(Type.LONG)) return new ToLongConverterFactory();
-            else if(resultType.equals(Type.FLOAT)) return new ToFloatConverterFactory();
-            else if(resultType.equals(Type.DOUBLE)) return new ToDoubleConverterFactory();
-            else if(resultType.equals(Type.SHORT)) return new ToShortConverterFactory();
-            else if(resultType.equals(Type.BYTE)) return new ToByteConverterFactory();
-
-            throw new UnsupportedTypeException(resultType);
-        }
+    static {
+        addConverter(String.class, new StringConverter());
+        addConverter(Boolean.class, new BooleanConverter());
+        addConverter(Character.class, new CharConverter());
+        addConverter(Number.class, new NumberConverter());
+        addConverter(Byte.class, new ByteConverter());
+        addConverter(Short.class, new ShortConverter());
+        addConverter(Integer.class, new IntegerConverter());
+        addConverter(Long.class, new LongConverter());
+        addConverter(Float.class, new FloatConverter());
+        addConverter(Double.class, new DoubleConverter());
     }
 }

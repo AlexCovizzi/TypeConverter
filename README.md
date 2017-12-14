@@ -1,1 +1,1 @@
-# com.alexcovizzi.typeconverter.TypeConverter
+# TypeConverter

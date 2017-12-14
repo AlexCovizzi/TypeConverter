@@ -1,15 +1,19 @@
 package com.alexcovizzi.typeconverter.exceptions;
 
 /**
- * Created by Alex on 05/12/2017.
+ * Thrown
  */
 public class InvalidConversionException extends RuntimeException {
 
-    public InvalidConversionException() {
-        super();
+    public InvalidConversionException(Class valueClass, Class resultClass) {
+        super("Can't convert "+valueClass.getCanonicalName()+" to "+resultClass.getCanonicalName());
     }
 
-    public InvalidConversionException(String s) {
-        super(s);
+    public InvalidConversionException(Object valueOrType, Class resultClass) {
+        super("Can't convert "+valueOrType+" to "+resultClass.getCanonicalName());
+    }
+
+    public InvalidConversionException(Object valueOrType, String resultType) {
+        super("Can't convert "+valueOrType+" to "+resultType);
     }
 }
