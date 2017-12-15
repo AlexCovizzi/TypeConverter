@@ -6,32 +6,21 @@ import com.alexcovizzi.typeconverter.exceptions.InvalidConversionException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-/**
- *
- */
 public class TypeConverter {
-    private static final Map<String, Converter<?>> converterMap = new ConcurrentHashMap();
+    private static final ConverterMap converterMap = new ConverterMap();
 
-    public static Builder convert(@Nullable Object value) {
-        return (new TypeConverter()).new Builder(value);
+    public static <T> Converter<T> addConverter(@NotNull Class<T> cls, @NotNull Converter<T> converter) {
+        return converterMap.put(cls, converter);
     }
 
-    public static <T> void addConverter(Class<T> cls, Converter<T> converter) {
-        String key = cls.getCanonicalName();
-        addConverter(key, converter);
-    }
-
-    public static void addConverter(String type, Converter<?> converter) {
-        converterMap.put(type, converter);
+    public static Converter<?> addConverter(@NotNull String type, @NotNull Converter<?> converter) {
+        return converterMap.put(type, converter);
     }
 
     @Nullable
     public static <T>Converter<T> getConverter(Class<T> cls) {
-        String key = cls.getCanonicalName();
-        return (Converter<T>) getConverter(key);
+        return converterMap.get(cls);
     }
 
     @Nullable
@@ -39,13 +28,16 @@ public class TypeConverter {
         return converterMap.get(type);
     }
 
-    public static void removeConverter(Class<?> cls) {
-        String key = cls.getCanonicalName();
-        removeConverter(key);
+    public static <T> Converter<T> removeConverter(Class<T> cls) {
+        return converterMap.remove(cls);
     }
 
-    public static void removeConverter(String type) {
-        converterMap.remove(type);
+    public static Converter<?> removeConverter(String type) {
+        return converterMap.remove(type);
+    }
+
+    public static Builder convert(@Nullable Object value) {
+        return (new TypeConverter()).new Builder(value);
     }
 
     public class Builder {
@@ -77,7 +69,7 @@ public class TypeConverter {
             type = Utils.primitiveToWrapperType(type);
             Converter converter = getConverter(type);
             if(converter == null) throw new ConverterNotFoundException(type);
-            return with(getConverter(type));
+            return with(converter);
         }
 
         public Object with(@NotNull Converter...converters) {
@@ -131,18 +123,5 @@ public class TypeConverter {
             return to(Character.class);
         }
 
-    }
-
-    static {
-        addConverter(String.class, new StringConverter());
-        addConverter(Boolean.class, new BooleanConverter());
-        addConverter(Character.class, new CharConverter());
-        addConverter(Number.class, new NumberConverter());
-        addConverter(Byte.class, new ByteConverter());
-        addConverter(Short.class, new ShortConverter());
-        addConverter(Integer.class, new IntegerConverter());
-        addConverter(Long.class, new LongConverter());
-        addConverter(Float.class, new FloatConverter());
-        addConverter(Double.class, new DoubleConverter());
     }
 }

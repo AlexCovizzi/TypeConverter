@@ -5,7 +5,7 @@ import com.alexcovizzi.typeconverter.exceptions.InvalidConversionException;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Created by Alex on 14/12/2017.
+ * Convert to Byte.
  */
 public class ByteConverter  implements Converter<Byte> {
 

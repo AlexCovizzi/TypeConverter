@@ -5,10 +5,19 @@ import com.alexcovizzi.typeconverter.exceptions.InvalidConversionException;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Created by Alex on 13/12/2017.
+ * Convert to Boolean.
  */
 public class BooleanConverter implements Converter<Boolean> {
 
+    /**
+     * Convert to Boolean.
+     *
+     * @param value The object to convert.
+     * @return {@code true} if the string value of the given object matches '1' or 'true'.
+     * {@code false} if the string value of the given object matches '0' or 'false'.
+     * {@code null} if the given object is null.
+     * @throws InvalidConversionException If the object can't be converted to a boolean.
+     */
     @Nullable
     @Override
     public Boolean convert(Object value) throws InvalidConversionException {

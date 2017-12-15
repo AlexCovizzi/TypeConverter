@@ -1,9 +1,17 @@
 package com.alexcovizzi.typeconverter;
 
 import com.alexcovizzi.typeconverter.exceptions.InvalidConversionException;
-import org.jetbrains.annotations.Nullable;
 
+/**
+ * Convert a value to the specified type.
+ * @param <T> Result type.
+ */
 public interface Converter<T> {
-    @Nullable
+    /**
+     * Convert a value to the specified type.
+     * @param value The object to convert.
+     * @return The converted object.
+     * @throws InvalidConversionException If the value can't be converted to the specified type.
+     */
     T convert(Object value) throws InvalidConversionException;
 }

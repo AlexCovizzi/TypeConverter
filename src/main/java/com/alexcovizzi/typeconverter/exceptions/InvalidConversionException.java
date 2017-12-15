@@ -1,7 +1,11 @@
 package com.alexcovizzi.typeconverter.exceptions;
 
+
+import com.alexcovizzi.typeconverter.Converter;
+
 /**
- * Thrown
+ * Thrown by {@link Converter#convert(Object)}
+ * when the given value can't be converted to the converter type.
  */
 public class InvalidConversionException extends RuntimeException {
 

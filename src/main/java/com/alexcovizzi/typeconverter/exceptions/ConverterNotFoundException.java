@@ -1,5 +1,8 @@
 package com.alexcovizzi.typeconverter.exceptions;
 
+/**
+ * Thrown when no converter is found for the given type or class.
+ */
 public class ConverterNotFoundException extends RuntimeException {
 
     public ConverterNotFoundException(Class cls) {
