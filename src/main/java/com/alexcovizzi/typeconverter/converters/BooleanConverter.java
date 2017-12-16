@@ -2,7 +2,6 @@ package com.alexcovizzi.typeconverter.converters;
 
 import com.alexcovizzi.typeconverter.Converter;
 import com.alexcovizzi.typeconverter.exceptions.InvalidConversionException;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Convert to Boolean.
@@ -18,7 +17,6 @@ public class BooleanConverter implements Converter<Boolean> {
      * {@code null} if the given object is null.
      * @throws InvalidConversionException If the object can't be converted to a boolean.
      */
-    @Nullable
     @Override
     public Boolean convert(Object value) throws InvalidConversionException {
         if(value == null) return null;

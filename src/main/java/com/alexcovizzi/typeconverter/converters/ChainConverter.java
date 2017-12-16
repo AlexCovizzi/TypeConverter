@@ -2,7 +2,6 @@ package com.alexcovizzi.typeconverter.converters;
 
 import com.alexcovizzi.typeconverter.Converter;
 import com.alexcovizzi.typeconverter.exceptions.InvalidConversionException;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +24,6 @@ public class ChainConverter implements Converter {
         converters.add(converter);
     }
 
-    @Nullable
     @Override
     public Object convert(Object value) throws InvalidConversionException {
         Object result = value;
