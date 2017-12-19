@@ -34,6 +34,7 @@ public final class TypeConverter {
      * The mapping is used when converting with {@code to(String)}
      * (e.g. {@code TypeConverter.convert(value).to(key); } ) <br/>
      * Note: It's suggested to use as key the canonical name of the class you are converting to.
+     * Note: Don't use primitive type names as keys.
      *
      * @param map The new mapping to append or substitute.
      * @param substitute If true, substitute the current mapping
@@ -116,6 +117,26 @@ public final class TypeConverter {
         Converter converter = converterMap.get(type);
         if(converter == null) throw new ConverterNotFoundException(type);
         return with(converter);
+    }
+
+    /**
+     * Use a specific converter for the conversion.<br/>
+     *
+     * @param converter Converter to use for the conversion.
+     * @return The result of this conversion already casted to the converter type. Can be null if there is no default value.
+     *
+     * @throws NullPointerException If the converter is null.
+     * @throws InvalidConversionException If a conversion failed and there is no default value.
+     */
+    public <T>T with(Converter<T> converter) {
+        try {
+            Object result = converter.convert(value);
+            if(result == null && hasDef) result = defValue;
+            return (T) result;
+        } catch (InvalidConversionException e) {
+            if(hasDef) return (T) defValue;
+            else throw e;
+        }
     }
 
     /**
