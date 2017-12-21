@@ -27,22 +27,36 @@ public final class TypeConverter {
 
     private static final Map<String, Converter> converterMap = new ConcurrentHashMap<String, Converter>();
 
-    /**
-     * Use a new mapping when converting.<br/>
-     * You can substitute the current mapping or append your new mapping to the current one, in this
-     * last case if there are entries with the same key, they are substituted.<br/>
-     * The mapping is used when converting with {@code to(String)}
-     * (e.g. {@code TypeConverter.convert(value).to(key); } ) <br/>
-     * Note: It's suggested to use as key the canonical name of the class you are converting to.
-     * Note: Don't use primitive type names as keys.
-     *
-     * @param map The new mapping to append or substitute.
-     * @param substitute If true, substitute the current mapping
-     *                   If false, append the new mapping.
-     */
-    public static void use(Map<String, Converter> map, boolean substitute) {
-        if(substitute) converterMap.clear();
-        converterMap.putAll(map);
+    public static void add(Map<String, Converter> map) {
+        for(Map.Entry<String, Converter> entry : map.entrySet()) {
+            add(entry.getKey(), entry.getValue());
+        }
+    }
+
+    public static <T> void add(Class<T> cls, Converter<T> converter) {
+        add(cls.getCanonicalName(), converter);
+    }
+
+    public static void add(String type, Converter converter) {
+        type = primitiveToWrapperType(type);
+        converterMap.put(type, converter);
+    }
+
+    public static <T> Converter<T> get(Class<T> cls) {
+        return (Converter<T>) get(cls.getCanonicalName());
+    }
+
+    public static Converter get(String type) {
+        type = primitiveToWrapperType(type);
+        return converterMap.get(type);
+    }
+
+    public static <T> Converter<T> remove(Class<T> cls) {
+        return (Converter<T>) remove(cls.getCanonicalName());
+    }
+
+    public static Converter remove(String type) {
+        return converterMap.remove(type);
     }
 
     /**
@@ -217,7 +231,7 @@ public final class TypeConverter {
         standardConverterMap.put(TYPE_FLOAT, new FloatConverter());
         standardConverterMap.put(TYPE_DOUBLE, new DoubleConverter());
 
-        use(standardConverterMap, true);
+        add(standardConverterMap);
     }
 
     /* Transform the given primitive type to its wrapper. If the type is not primitive return the same type. */
