@@ -4,12 +4,46 @@ import com.alexcovizzi.typeconverter.converters.*;
 import com.alexcovizzi.typeconverter.exceptions.ConverterNotFoundException;
 import com.alexcovizzi.typeconverter.exceptions.InvalidConversionException;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Easily convert any given value to a new type.
+ * Easily convert any value to a new type.<br>
+ * To convert to a new type use the method {@link com.alexcovizzi.typeconverter.TypeConverter#convert(Object)} specifying the object to convert.<br>
+ * You can specify a default value using the method {@link com.alexcovizzi.typeconverter.TypeConverter#def(Object)}, the default value is returned if the conversion is invalid
+ * ({@link com.alexcovizzi.typeconverter.exceptions.InvalidConversionException} is not thrown) or if the value returned is null.<br>
+ * You can choose which converter to use for the conversion specifying the result type/class ({@link com.alexcovizzi.typeconverter.TypeConverter#to(String)})
+ * or the converter/s to use ({@link com.alexcovizzi.typeconverter.TypeConverter#with(Converter)}).
+ * <br>
+ * <br>
+ * Example - Conversion without default value <br>
+ * <code>TypeConverter.convert(value).to(String.class)</code>
+ * <br>
+ * <br>
+ * Example - Conversion with default value <br>
+ * <code>TypeConverter.convert(value).def(defValue).to(String.class)</code>
+ * <br>
+ * The supported types right now are:
+ * <ul>
+ *     <li>{@code java.lang.Boolean}</li>
+ *     <li>{@code java.lang.Byte}</li>
+ *     <li>{@code java.lang.Character}</li>
+ *     <li>{@code java.lang.Double}</li>
+ *     <li>{@code java.lang.Float}</li>
+ *     <li>{@code java.lang.Integer}</li>
+ *     <li>{@code java.lang.Long}</li>
+ *     <li>{@code java.lang.Number}</li>
+ *     <li>{@code java.lang.Short}</li>
+ *     <li>{@code java.lang.String}</li>
+ * </ul>
+ * <br>
+ * You can extend/change the supported types by using the methods:
+ * <ul>
+ *     <li>{@code TypeConverter.add}: Add converters specifying type/class and the converter or a mapping.</li>
+ *     <li>{@code TypeConverter.remove}: Remove converters specifying type/class.</li>
+ * </ul>
+ * <br>
+ *
  */
 public final class TypeConverter {
 
@@ -28,9 +62,7 @@ public final class TypeConverter {
     private static final Map<String, Converter> converterMap = new ConcurrentHashMap<String, Converter>();
 
     public static void add(Map<String, Converter> map) {
-        for(Map.Entry<String, Converter> entry : map.entrySet()) {
-            add(entry.getKey(), entry.getValue());
-        }
+        converterMap.putAll(map);
     }
 
     public static <T> void add(Class<T> cls, Converter<T> converter) {
@@ -61,12 +93,6 @@ public final class TypeConverter {
 
     /**
      * Convert the given object.
-     * <p>
-     *     This method will return an instance of TypeConverter to build your conversion.<br/>
-     *     You can select a default value: {@link TypeConverter#def(Object)}.<br/>
-     *     You can select which converter(s) to use: {@link TypeConverter#with(Converter[])}.<br/>
-     *     You can convert to a new type given a string: {@link TypeConverter#to(String)}<br/>
-     * </p>
      *
      * @param value The object to convert.
      * @return An instance of TypeConverter to build the conversion.
@@ -84,7 +110,7 @@ public final class TypeConverter {
     }
 
     /**
-     * Default value to use when the result is null or an InvalidConversionException is thrown.<br/>
+     * Default value to use when the result is null or an InvalidConversionException is thrown.<br>
      * Note: if a converter is not found ConverterNotFoundException is still thrown.
      *
      * @param defaultValue The default value.
@@ -98,8 +124,8 @@ public final class TypeConverter {
     }
 
     /**
-     * Convert the value to the class specified. <br/>
-     * If no converter is found for this class ConverterNotFoundException is thrown.<br/>
+     * Convert the value to the class specified. <br>
+     * If no converter is found for this class ConverterNotFoundException is thrown.<br>
      * Note: To find the converter for this class it's used the canonical name of the class.
      *
      * @param cls The class to convert to.
@@ -116,9 +142,9 @@ public final class TypeConverter {
     }
 
     /**
-     * Convert the value to the type specified. (Usually the type is the canonical name of the class) <br/>
-     * If no converter is found for this class ConverterNotFoundException is thrown.<br/>
-     * Note: primitive types are automatically changed to their respective wrapper class name (e.g int -> Integer)
+     * Convert the value to the type specified. (Usually the type is the canonical name of the class) <br>
+     * If no converter is found for this class ConverterNotFoundException is thrown.<br>
+     * Note: primitive types are automatically changed to their respective wrapper class name (e.g int - Integer)
      *
      * @param type The key to use to find the converter inside the map.
      * @return The result of this conversion as an Object. Can be null if there is no default value.
@@ -134,7 +160,7 @@ public final class TypeConverter {
     }
 
     /**
-     * Use a specific converter for the conversion.<br/>
+     * Use a specific converter for the conversion.<br>
      *
      * @param converter Converter to use for the conversion.
      * @return The result of this conversion already casted to the converter type. Can be null if there is no default value.
@@ -154,8 +180,8 @@ public final class TypeConverter {
     }
 
     /**
-     * Converters to use for the conversion.<br/>
-     * If more than one converter is specified, the converters are used one after the other in the order they are given.<br/>
+     * Converters to use for the conversion.<br>
+     * If more than one converter is specified, the converters are used one after the other in the order they are given.<br>
      *
      * @param converters Converters to use for the conversion.
      * @return The result of this conversion as an Object. Can be null if there is no default value.
@@ -219,19 +245,16 @@ public final class TypeConverter {
 
     /* Populate the converter map */
     static {
-        Map<String, Converter> standardConverterMap = new HashMap<String, Converter>();
-        standardConverterMap.put(TYPE_STRING, new StringConverter());
-        standardConverterMap.put(TYPE_BOOLEAN, new BooleanConverter());
-        standardConverterMap.put(TYPE_CHAR, new CharConverter());
-        standardConverterMap.put(TYPE_NUMBER, new NumberConverter());
-        standardConverterMap.put(TYPE_BYTE, new ByteConverter());
-        standardConverterMap.put(TYPE_SHORT, new ShortConverter());
-        standardConverterMap.put(TYPE_INTEGER, new IntegerConverter());
-        standardConverterMap.put(TYPE_LONG, new LongConverter());
-        standardConverterMap.put(TYPE_FLOAT, new FloatConverter());
-        standardConverterMap.put(TYPE_DOUBLE, new DoubleConverter());
-
-        add(standardConverterMap);
+        add(TYPE_STRING, new StringConverter());
+        add(TYPE_BOOLEAN, new BooleanConverter());
+        add(TYPE_CHAR, new CharConverter());
+        add(TYPE_NUMBER, new NumberConverter());
+        add(TYPE_BYTE, new ByteConverter());
+        add(TYPE_SHORT, new ShortConverter());
+        add(TYPE_INTEGER, new IntegerConverter());
+        add(TYPE_LONG, new LongConverter());
+        add(TYPE_FLOAT, new FloatConverter());
+        add(TYPE_DOUBLE, new DoubleConverter());
     }
 
     /* Transform the given primitive type to its wrapper. If the type is not primitive return the same type. */
